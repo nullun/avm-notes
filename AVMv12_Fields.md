@@ -8,6 +8,9 @@ In AVMv12 two new fields have been introduced to application (`appl`) transactio
    * A simple resource can be either "address" (`d`), "asset" (`s`), or "app" (`p`). Where each resource includes a single reference.
    * A complex resource can be either "holding" (`h`), "locals" (`l`), or "box" (`b`). Where each resource includes up to two 1-based indexes to simple resources included in the access list. An index of zero (`0`) has a special meaning of "current sender address" or "current application id", and would also be omitted from the structure.
 
+> [!IMPORTANT]
+> At present, "locals" has a bug where the app index cannot be `0` (referring to itself). This can be overcome by including an app reference with the current application ID.
+
 In addition to the new fields, the maximum number of resources that can be included on a transaction is twice the maximum number of foreign references a transaction had previously been able to use.
  * `v24.MaxAppTotalTxnReferences = 8` - Old value, used for foreign references.
  * `v41.MaxAppAccess = 16` - Higher limit, when using the Access List.
@@ -42,6 +45,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 
 #### Simple Resources
 
+Include 1 Address in the Access List.
+
 ```jsonc
 {
   "al": [ // Access List array
@@ -59,6 +64,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 }
 ```
 
+Include 1 Asset in the Access List.
+
 ```jsonc
 {
 // ...
@@ -70,6 +77,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 // ...
 }
 ```
+
+Include 1 Application in the Access List.
 
 ```jsonc
 {
@@ -84,6 +93,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 ```
 
 #### Complex Resources
+
+Include 1 Holding in the Access List. This requires the Address and Asset to also be included.
 
 ```jsonc
 {
@@ -106,6 +117,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 }
 ```
 
+Include 1 Locals in the Access List. This requires the Application and Address to also be included.
+
 ```jsonc
 {
 // ...
@@ -126,6 +139,8 @@ For brevity I will only show the full transaction structure once per section. Fo
 // ...
 }
 ```
+
+Include 1 Box in the Access List. This requires the Application to also be included.
 
 ```jsonc
 {
