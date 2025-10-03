@@ -1,21 +1,34 @@
 # AVMv12 Fields
 
-## Summary
+## New Features
+
+ * Reject Version
+ * Access List
+ * Empty BoxRefs
+
+## Summary
 
 In AVMv12 two new fields have been introduced to application (`appl`) transactions.
  * `apar` - Reject Version: If the application being called has a version equal-to or greater-than the provided reject version, the transaction will be rejected.
  * `al` - Access List: An array of resources that the application or group can use. Each resource will be one of two types; "simple" or "complex".
    * A simple resource can be either "address" (`d`), "asset" (`s`), or "app" (`p`). Where each resource includes a single reference.
-   * A complex resource can be either "holding" (`h`), "locals" (`l`), or "box" (`b`). Where each resource includes up to two 1-based indexes to simple resources included in the access list. An index of zero (`0`) has a special meaning of "current sender address" or "current application id", and would also be omitted from the structure.
+   * A complex resource can be either "holding" (`h`), "locals" (`l`), or "box" (`b`). Where holding and locals resources includes up to two 1-based indexes to simple resources included in the access list, and box includes one 1-based index to an app resource included in the access list, and the base64 encoded name of the box.
+
+A complex resource with an index of zero (`0`) for an address or app has a special meaning of "current sender address" or "current application id", and would also be omitted from the structure.
 
 > [!IMPORTANT]
 > At present, "locals" has a bug where the app index cannot be `0` (referring to itself). This can be overcome by including an app reference with the current application ID.
 
-In addition to the new fields, the maximum number of resources that can be included on a transaction is twice the maximum number of foreign references a transaction had previously been able to use.
+Box references where there is no app and name supplied are referred to as Empty BoxRefs. These can now be used during the creation of new applications whose App ID was unknown prior to being created, and any box name may be used within the contract. When these are used in conjunction with the Access List, any identification of being a box resource are omitted and show simply as `{}`. I would personally refer to these as something more generic, such as an "Empty Reference", "Extra Resource", or similar.
+
+> [!NOTE]
+> Whilst nothing is confirmed, it's thought that these Empty Resources (`{}`) could be used in the future to allow larger program calls, more IO budget, etc.
+
+To complement the new Access List, the maximum number of resources that can be included on a transaction is twice the maximum number of foreign references a transaction had previously been able to use.
  * `v24.MaxAppTotalTxnReferences = 8` - Old value, used for foreign references.
  * `v41.MaxAppAccess = 16` - Higher limit, when using the Access List.
 
-However the number of accounts that can be included in the old foreign references array has been increased to 8. Matching apps, assets, and boxes.
+Additionally the number of accounts that can be included in the old foreign references array has been increased to 8. Matching apps, assets, and boxes.
  * `v41.MaxAppTxnAccounts = 8` - Increased from 4.
 
 The new Access List and existing Foreign Reference arrays are mutually exclusive, and cannot be used together on the same transaction.
@@ -155,6 +168,20 @@ Include 1 Box in the Access List. This requires the Application to also be inclu
           "n": "Ym94TmFtZQ==" // Base64 encoded Box name
         }
       }
+    ],
+// ...
+}
+```
+
+### Empty BoxRefs
+
+Include 1 Empty BoxRefs in the Access List.
+
+```jsonc
+{
+// ...
+    "al": [
+      {}
     ],
 // ...
 }
