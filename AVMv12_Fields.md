@@ -1,4 +1,4 @@
-# AVMv12 Fields
+# AVMv12 Fields
 
 ## New Features
 
@@ -6,7 +6,7 @@
  * Access List
  * Empty BoxRefs
 
-## Summary
+## Summary
 
 In AVMv12 two new fields have been introduced to application (`appl`) transactions.
  * `apar` - Reject Version: If the application being called has a version equal-to or greater-than the provided reject version, the transaction will be rejected.
