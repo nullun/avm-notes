@@ -9,7 +9,7 @@
 ## Summary
 
 In AVMv12 two new fields have been introduced to application (`appl`) transactions.
- * `apar` - Reject Version: If the application being called has a version equal-to or greater-than the provided reject version, the transaction will be rejected.
+ * `aprv` - Reject Version: If the application being called has a version equal-to or greater-than the provided reject version, the transaction will be rejected.
  * `al` - Access List: An array of resources that the application or group can use. Each resource will be one of two types; "simple" or "complex".
    * A simple resource can be either "address" (`d`), "asset" (`s`), or "app" (`p`). Where each resource includes a single reference.
    * A complex resource can be either "holding" (`h`), "locals" (`l`), or "box" (`b`). Where holding and locals resources includes up to two 1-based indexes to simple resources included in the access list, and box includes one 1-based index to an app resource included in the access list, and the base64 encoded name of the box.
